@@ -13,20 +13,24 @@ $(TARGET): $(SRC)
 	$(CC) $(SRC) -o $(TARGET)
 
 install: $(TARGET)
-	@echo "Stopping existing agent if running..."
+	@echo "Stopping existing agent..."
 	-launchctl unload $(AGENT_DIR)/$(PLIST) 2>/dev/null || true
 
 	@echo "Installing binary..."
 	sudo cp -f $(TARGET) $(BINARY_DEST)
 
+	@echo "Resetting TCC permissions..."
+	-tccutil reset Accessibility $(BINARY_DEST) 2>/dev/null || true
+
 	@echo "Loading agent..."
 	launchctl load $(AGENT_DIR)/$(PLIST)
-	@echo "Installation complete."
+	@echo "Installation complete. Please re-enable mwm in System Settings if prompted."
 
 uninstall:
 	-launchctl unload $(AGENT_DIR)/$(PLIST) 2>/dev/null || true
+	-tccutil reset Accessibility $(BINARY_DEST) 2>/dev/null || true
 	sudo rm -f $(BINARY_DEST)
-	@echo "Uninstalled."
+	@echo "Uninstalled and privacy records cleared."
 
 clean:
 	rm -f $(TARGET)

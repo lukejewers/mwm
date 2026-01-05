@@ -11,7 +11,7 @@ var isSwapped: Bool = false
 enum AppConfig: UInt32, CaseIterable {
     case emacs, firefox, ghostty, messages
     case moveLeft, moveRight, maximize, centre
-    case layoutFull, layoutSplit
+    case layoutFull, layoutSplit, terminate
 
     var keyCode: UInt32 {
         switch self {
@@ -25,6 +25,7 @@ enum AppConfig: UInt32, CaseIterable {
         case .centre:      return UInt32(kVK_DownArrow)
         case .layoutFull:  return UInt32(kVK_ANSI_F)
         case .layoutSplit: return UInt32(kVK_ANSI_E)
+        case .terminate:   return UInt32(kVK_ANSI_W)
         }
     }
 
@@ -94,6 +95,13 @@ func openAndActivate(app: AppConfig) {
     }
 }
 
+func terminateFocusedApp() {
+    if let frontmostApp = NSWorkspace.shared.frontmostApplication {
+        guard frontmostApp.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
+        frontmostApp.terminate()
+    }
+}
+
 func switchLayouts(to state: LayoutState) {
     if state == .twoPane {
         if currentLayoutState == .twoPane { isSwapped.toggle() }
@@ -128,6 +136,7 @@ func hotKeyHandler(nextHandler: EventHandlerCallRef?, event: EventRef?, userData
         case .centre:      moveFocusedWindow(toUnit: CGRect(x: 0.19, y: 0.19, width: 0.62, height: 0.62))
         case .layoutFull:  switchLayouts(to: .fullscreen)
         case .layoutSplit: switchLayouts(to: .twoPane)
+        case .terminate:   terminateFocusedApp()
         default:           openAndActivate(app: app)
         }
     }
@@ -143,12 +152,7 @@ func bind(app: AppConfig) {
 
 func checkAccessibilityPermissions() {
     let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
-    let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary)
-    if !accessEnabled {
-        print("Access not enabled. Opening System Settings...")
-        let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
-        NSWorkspace.shared.open(url)
-    }
+    AXIsProcessTrustedWithOptions(options as CFDictionary)
 }
 
 let app = NSApplication.shared

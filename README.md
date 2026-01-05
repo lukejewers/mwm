@@ -38,6 +38,7 @@ All hotkeys use the Hyper Key combination: Control + Command.
 | Right | Snap focused window to the Right Half |
 | Up    | Maximize focused window               |
 | Down  | Center focused window (70% size)      |
+| W     | Terminate frontmost app               |
 
 ### Layout Modes
 
