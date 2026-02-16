@@ -52,13 +52,16 @@ func moveFocusedWindow(toUnit unit: CGRect) {
     let result = AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &focusedWindow)
     guard result == .success, let window = focusedWindow as! AXUIElement? else { return }
 
-    guard let screen = NSScreen.main else { return }
+    guard let screen = NSScreen.screens.first(where: { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) })
+        ?? NSScreen.screens.first else { return }
+
     let visibleFrame = screen.visibleFrame
     let fullFrame = screen.frame
 
     let newWidth = visibleFrame.width * unit.size.width
     let newHeight = visibleFrame.height * unit.size.height
     let newX = visibleFrame.origin.x + (visibleFrame.width * unit.origin.x)
+
     let cocoaY = visibleFrame.origin.y + (visibleFrame.height * unit.origin.y)
     let newY = fullFrame.height - cocoaY - newHeight
 
