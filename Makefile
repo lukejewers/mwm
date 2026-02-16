@@ -1,9 +1,10 @@
-CC          = swiftc
-TARGET      = mwm
-SRC         = main.swift
-PLIST       = com.user.mwm.plist
-AGENT_DIR   = $(HOME)/Library/LaunchAgents
-BINARY_DEST = /usr/local/bin/$(TARGET)
+CC          := swiftc
+TARGET      := mwm
+SRC         := main.swift
+PLIST       := com.user.mwm.plist
+AGENT_DIR   := $(HOME)/Library/LaunchAgents
+BINARY_DEST := /usr/local/bin/$(TARGET)
+CURR_DIR    := $(HOME)/projects/mwm
 
 .PHONY: all install uninstall clean restart
 
@@ -18,6 +19,9 @@ install: $(TARGET)
 
 	@echo "Installing binary..."
 	sudo cp -f $(TARGET) $(BINARY_DEST)
+
+	@echo "Symlinking..."
+	ln -sf $(CURR_DIR)/$(PLIST) $(AGENT_DIR)
 
 	@echo "Resetting TCC permissions..."
 	-tccutil reset Accessibility $(BINARY_DEST) 2>/dev/null || true
