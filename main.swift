@@ -9,7 +9,7 @@ var currentLayoutState: LayoutState = .fullscreen
 var isSwapped: Bool = false
 
 enum AppConfig: UInt32, CaseIterable {
-    case emacs, firefox, ghostty, messages
+    case emacs, firefox, messages
     case moveLeft, moveRight, maximize, centre
     case layoutFull, layoutSplit, terminate
 
@@ -17,7 +17,6 @@ enum AppConfig: UInt32, CaseIterable {
         switch self {
         case .emacs:       return UInt32(kVK_ANSI_J)
         case .firefox:     return UInt32(kVK_ANSI_K)
-        case .ghostty:     return UInt32(kVK_ANSI_L)
         case .messages:    return UInt32(kVK_ANSI_M)
         case .moveLeft:    return UInt32(kVK_LeftArrow)
         case .moveRight:   return UInt32(kVK_RightArrow)
@@ -33,7 +32,6 @@ enum AppConfig: UInt32, CaseIterable {
         switch self {
         case .emacs:    return "org.gnu.Emacs"
         case .firefox:  return "org.mozilla.firefox"
-        case .ghostty:  return "com.mitchellh.ghostty"
         case .messages: return "com.apple.MobileSMS"
         default:        return nil
         }
